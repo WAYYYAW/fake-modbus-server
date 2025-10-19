@@ -22,8 +22,14 @@ func main() {
 	// 模拟周期性更新寄存器数据
 	for {
 		t := float64(time.Now().Unix()%60) / 60 * 2 * math.Pi
-		position := uint16(1000 + 500*math.Sin(t)) // 模拟位置
-		load := uint16(2000 + 1000*math.Cos(t))    // 模拟载荷
+		// 使用爱心曲线方程生成轨迹
+		// x = 16sin³(t), y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
+		heartX := 16 * math.Pow(math.Sin(t), 3)
+		heartY := 13*math.Cos(t) - 5*math.Cos(2*t) - 2*math.Cos(3*t) - math.Cos(4*t)
+
+		// 调整数值范围以适应uint16类型和更好的可视化效果
+		position := uint16(1000 + 40*heartX) // 模拟位置
+		load := uint16(2000 + 100*heartY)    // 模拟载荷
 
 		// 写入寄存器
 		server.HoldingRegisters[0] = position
